@@ -4,7 +4,7 @@
 
   校验用户pin的用户画像是否匹配所配置的人群策略，方法参数，用户pin和配置人群策略
 
-![](https://cf.jd.com/download/attachments/113915923/image2018-5-24%209%3A23%3A57.png?version=1&modificationDate=1530949284000&api=v2)
+![](../.gitbook/assets/pin.jpeg)
 
 ### 2.压测记录
 
@@ -14,11 +14,11 @@
 
 第一次压测   100虚拟用户 20线程 5个压侧机
 
-![](https://cf.jd.com/download/attachments/113915923/image2018-5-24%209%3A29%3A52.png?version=1&modificationDate=1530949284000&api=v2)
+![100&#x865A;&#x62DF;&#x7528;&#x6237; 20&#x7EBF;&#x7A0B; 5&#x4E2A;&#x538B;&#x4FA7;&#x673A;](../.gitbook/assets/pin3.jpeg)
 
 第二次压测  10个虚拟用户  5个线程 2个压侧机     疑问，相同环境，100个虚拟用户和10个虚拟用户为什么性能指标相差这么多？咨询桥总后，说正常压测10个虚拟用户就够了
 
-![](https://cf.jd.com/download/attachments/113915923/image2018-5-24%209%3A37%3A16.png?version=1&modificationDate=1530949283000&api=v2)
+![10&#x4E2A;&#x865A;&#x62DF;&#x7528;&#x6237;](../.gitbook/assets/pin4.jpeg)
 
 根据第二组压测数据，发现TP99下来了，但是TPS还是不咋的，继续分析java堆栈TOP10的数据，发现以下两个方法的耗时排前两个，所以先假定是这两个方法影响了性能，首先把方法里面涉及打error日志的地方都清除，再进行压测
 
@@ -54,11 +54,11 @@
 
 第三次压测  10个虚拟用户  5个线程 2个压侧机  删除error日志    TP99没有什么变化，但是TPS上升了两倍
 
-![](https://cf.jd.com/download/attachments/113915923/image2018-5-24%209%3A47%3A42.png?version=1&modificationDate=1530949283000&api=v2)
+![&#x5220;&#x9664;error&#x65E5;&#x5FD7;&#x540E;&#x538B;&#x6D4B;](../.gitbook/assets/pin1.jpeg)
 
 第四次压测  10个虚拟用户  5个线程 2个压侧机  删除UMP封装方法才用写死监控key的方式，删除error日志    TP99下降4/1，但是TPS上升了4/1，然后对比ump监控发现TP99的消耗主要在外部接口用户画像上，内部匹配代码已经没有什么优化空间了
 
-![](https://cf.jd.com/download/attachments/113915923/image2018-5-24%209%3A52%3A26.png?version=1&modificationDate=1530949283000&api=v2)
+![](../.gitbook/assets/pin2.jpeg)
 
 结论：根据上面的压测分析，我们可以看到，Ump.methodReg方法里面的Thread.currentThread\(\).getStackTrace\(\)和打error日志在高并发的情况下对性能还是有一定的影响。  这里主要开发接口的时候自己为了方便排查问题，对关键数据的地方都打了error日志，这里后面要注意
 
