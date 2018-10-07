@@ -7,14 +7,16 @@ description: 'code coverage, jacoco, jenkins'
 ### 配置过程分为两步： {#Jacoco+Jenkins实现代码覆盖率实时统计-配置过程分为两步：}
 
 * 被测应用启动Tomcat时添加javaagent参数，通过jacoccoagent.jar生成覆盖率统计文件
-* 远程获取被测应用的覆盖率统计文件，生成report  
+* 远程获取被测应用的覆盖率统计文件，生成report
 
 ### 步骤一：被测应用启动Tomcat时添加javaagent参数 {#Jacoco+Jenkins实现代码覆盖率实时统计-步骤一：被测应用启动Tomcat时添加javaagent参数}
 
 * 下载[Jacoco-0.8.0.zip](http://search.maven.org/remotecontent?filepath=org/jacoco/jacoco/0.8.0/jacoco-0.8.0.zip)，  解压后把 lib/jacocoagent.jar，放入被测应用所在服务器上：/export/software/jacocoagent.jar
 * 修改被测应用所属Tomcat的启动脚本，如下：
 
-![](https://cf.jd.com/download/attachments/109442784/image2018-3-14%2018%3A50%3A52.png?version=1&modificationDate=1527649989000&api=v2)
+```text
+export JAVA_OPTS="${JAVA_OPTS} -javaagent:/export/software/jacocoagent.jar=output=tcpserver,address=*,port=1235"
+```
 
 参数含义参见[这里](http://www.jacoco.org/jacoco/trunk/doc/agent.html)，port的值需要记下，远程拉取统计文件的时候要用。
 
